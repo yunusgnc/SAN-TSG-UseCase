@@ -3,7 +3,7 @@ export type RoutePermission = 'VIEW_POSTS' | 'VIEW_COMMENTS' | 'EDIT_POST' | 'CR
 export interface AppRoute {
   name: string;
   path: string;
-  renderer: () => Promise<{ default: React.ComponentType<any> }> | React.ComponentType<any>;
+  renderer: () => Promise<{ default: React.ComponentType<any> }>;
   permissions?: RoutePermission[];
   translations?: string[];
 }
@@ -13,7 +13,7 @@ export const routes: AppRoute[] = [
     name: 'dashboard',
     path: '/',
     renderer: () => import('../pages/dashboard/DashboardPage'),
-    permissions: [],
+    permissions: ['VIEW_POSTS'],
     translations: ['dashboard'],
   },
   {
@@ -22,5 +22,19 @@ export const routes: AppRoute[] = [
     renderer: () => import('../pages/auth/LoginPage'),
     permissions: [],
     translations: ['auth'],
+  },
+  {
+    name: 'forbidden',
+    path: '/403',
+    renderer: () => import('../pages/ForbiddenPage'),
+    permissions: [],
+    translations: [],
+  },
+  {
+    name: 'not-found',
+    path: '/404',
+    renderer: () => import('../pages/NotFoundPage'),
+    permissions: [],
+    translations: [],
   },
 ]; 

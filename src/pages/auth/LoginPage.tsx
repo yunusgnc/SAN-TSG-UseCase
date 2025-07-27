@@ -1,17 +1,20 @@
 import React from 'react';
 import { nav } from '../../nav';
+import { useAuthContext } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
+  const { login } = useAuthContext();
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    const dummyUser = {
+    const USER = {
       name: 'John Doe',
       permissions: ['VIEW_POSTS', 'VIEW_COMMENTS']
     };
     
-    console.log('Kullanıcı giriş yaptı:', dummyUser);
+    login(USER);
+    console.log('Kullanıcı giriş yaptı:', USER);
     
     nav.dashboard.go(navigate);
   };
@@ -35,18 +38,16 @@ const LoginPage: React.FC = () => {
           </div>
           
           <div className="space-y-6">
-            <div className="space-y-4">
-              <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
-                    <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Demo Kullanıcı</p>
-                    <p className="text-xs text-gray-500">John Doe</p>
-                  </div>
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+              <div className="flex items-center space-x-3">
+                <div className="h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-gray-900">Demo Kullanıcı</p>
+                  <p className="text-xs text-gray-500">John Doe</p>
                 </div>
               </div>
             </div>
