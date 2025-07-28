@@ -12,33 +12,44 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   requiredPermissions = [] 
 }) => {
-  const { user, hasPermission } = useAuthContext();
+  const { user, hasPermission, isLoading } = useAuthContext();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      nav.login.go(navigate);
-      return;
-    }
-
-    // Route izinlerini kontrol et
-    if (requiredPermissions.length > 0) {
-      const hasAllPermissions = requiredPermissions.every(permission => 
-        hasPermission(permission)
-      );
-      
-      if (!hasAllPermissions) {
-        nav.forbidden.go(navigate);
+    if (!isLoading) {
+      if (!user) {
+        nav.login.go(navigate);
         return;
       }
+
+      if (requiredPermissions.length > 0) {
+        const hasAllPermissions = requiredPermissions.every(permission => 
+          hasPermission(permission)
+        );
+        
+        if (!hasAllPermissions) {
+          nav.forbidden.go(navigate);
+          return;
+        }
+      }
     }
-  }, [user, requiredPermissions, hasPermission, navigate]);
+  }, [user, requiredPermissions, hasPermission, navigate, isLoading]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+          <p className="text-gray-600">Kullanıcı bilgileri yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!user) {
     return null;
   }
 
-  // İzin kontrolü
   if (requiredPermissions.length > 0) {
     const hasAllPermissions = requiredPermissions.every(permission => 
       hasPermission(permission)

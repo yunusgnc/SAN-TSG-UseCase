@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 
@@ -9,6 +9,7 @@ export interface User {
 
 interface AuthContextType {
   user: User | null;
+  isLoading: boolean;
   login: (user: User) => void;
   logout: () => void;
   hasPermission: (permission: string) => boolean;
@@ -31,9 +32,19 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const queryClient = useQueryClient();
 
-  const { data: user } = useQuery({
+  const { data: user, isLoading } = useQuery({
     queryKey: ['user'],
     queryFn: () => {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        try {
+          return JSON.parse(storedUser) as User;
+        } catch (error) {
+          console.error('Kullanıcı bilgileri parse edilemedi:', error);
+          localStorage.removeItem('user');
+        }
+      }
+      
       const userData = queryClient.getQueryData(['user']) as User | null;
       return userData || null;
     },
@@ -43,18 +54,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = (userData: User) => {
     queryClient.setQueryData(['user'], userData);
+    localStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
     queryClient.setQueryData(['user'], null);
+    localStorage.removeItem('user');
   };
 
   const hasPermission = (permission: string): boolean => {
     return user?.permissions.includes(permission) || false;
   };
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser && !user) {
+      try {
+        const userData = JSON.parse(storedUser) as User;
+        queryClient.setQueryData(['user'], userData);
+      } catch (error) {
+        console.error('Kullanıcı bilgileri yüklenemedi:', error);
+        localStorage.removeItem('user');
+      }
+    }
+  }, [queryClient, user]);
+
   const value: AuthContextType = {
     user: user || null,
+    isLoading,
     login,
     logout,
     hasPermission,
