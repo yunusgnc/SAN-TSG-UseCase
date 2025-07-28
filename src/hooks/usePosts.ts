@@ -42,9 +42,19 @@ export const useUpdatePost = () => {
 
 export const useDeletePost = () => {
   const queryClient = useQueryClient();
-
+  
   return useMutation({
-    mutationFn: (id: number) => postsApi.delete(id),
+    mutationFn: async (postId: number) => {
+      const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${postId}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete post');
+      }
+      
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['posts'] });
     },

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { nav } from "../../nav";
 import { useAuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -10,16 +10,33 @@ const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useI18n();
 
+  const [permissions, setPermissions] = useState({
+    VIEW_POSTS: true,
+    VIEW_COMMENTS: true,
+    EDIT_POST: false,
+  });
+
+  const handlePermissionChange = (permission: string) => {
+    setPermissions(prev => ({
+      ...prev,
+      [permission]: !prev[permission as keyof typeof prev]
+    }));
+  };
+
   const handleLogin = () => {
+    const selectedPermissions = Object.keys(permissions).filter(
+      key => permissions[key as keyof typeof permissions]
+    );
+
     const USER = {
       name: "John Doe",
-      permissions: ["VIEW_POSTS", "VIEW_COMMENTS", "EDIT_POST", "CREATE_POST"],
+      permissions: selectedPermissions,
     };
 
     login(USER);
     console.log("Kullanıcı giriş yaptı:", USER);
 
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -57,7 +74,7 @@ const LoginPage: React.FC = () => {
 
             <div className="space-y-6">
               <div className="backdrop-blur-md bg-white/10 rounded-2xl p-6 border border-white/20">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-4 mb-4">
                   <div className="h-12 w-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
                     <svg
                       className="h-6 w-6 text-white"
@@ -79,6 +96,41 @@ const LoginPage: React.FC = () => {
                     </p>
                     <p className="text-gray-300 text-sm">John Doe</p>
                   </div>
+                </div>
+                
+                {/* Permission Checkboxes */}
+                <div className="space-y-3">
+                  <h3 className="text-white font-medium text-sm mb-3">{t("auth", "permissions")}</h3>
+                  
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={permissions.VIEW_POSTS}
+                      disabled={true}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
+                    />
+                    <span className="text-white text-sm">{t("auth", "viewPosts")}</span>
+                  </label>
+                  
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={permissions.VIEW_COMMENTS}
+                      disabled={true}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
+                    />
+                    <span className="text-white text-sm">{t("auth", "viewComments")}</span>
+                  </label>
+                  
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={permissions.EDIT_POST}
+                      onChange={() => handlePermissionChange('EDIT_POST')}
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <span className="text-white text-sm">{t("auth", "editPosts")}</span>
+                  </label>
                 </div>
               </div>
 

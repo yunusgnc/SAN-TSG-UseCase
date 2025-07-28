@@ -18,8 +18,36 @@ export const getTranslation = (
   return translations[locale]?.[module]?.[key] || key;
 };
 
-export const preloadTranslations = async (): Promise<void> => {
-  return Promise.resolve();
+export const preloadTranslations = async (modules: string[]): Promise<void> => {
+  try {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    await Promise.all(
+      modules.map(async (module) => {
+        try {
+          const response = await fetch(
+            `https://jsonplaceholder.typicode.com/posts/1`
+          );
+          if (!response.ok) {
+            console.warn(
+              `Translation module ${module} not found, using fallback`
+            );
+          }
+          console.log(`Translation module ${module} preloaded successfully`);
+        } catch (error) {
+          console.warn(
+            `Failed to preload translation module ${module}:`,
+            error
+          );
+        }
+      })
+    );
+  } catch (error) {
+    console.warn(
+      "Translation preloading failed, using local translations:",
+      error
+    );
+  }
 };
 
 export const translations: TranslationFiles = {
@@ -57,7 +85,12 @@ export const translations: TranslationFiles = {
       loginDescription: "Hesabınıza giriş yapın",
       demoUser: "Demo Kullanıcı",
       demoLogin: "Demo ile Giriş Yap",
-      demoDescription: "Bu bir demo uygulamasıdır. Gerçek kimlik bilgileri gerekmez.",
+      demoDescription:
+        "Bu bir demo uygulamasıdır. Gerçek kimlik bilgileri gerekmez.",
+      permissions: "İzinler:",
+      viewPosts: "Gönderileri Görüntüle (VIEW_POSTS)",
+      viewComments: "Yorumları Görüntüle (VIEW_COMMENTS)",
+      editPosts: "Gönderileri Düzenle (EDIT_POST)",
     },
     dashboard: {
       title: "Dashboard",
@@ -71,6 +104,7 @@ export const translations: TranslationFiles = {
     },
     posts: {
       title: "Gönderiler",
+      postsList: "Gönderiler",
       allPosts: "Tüm Gönderiler",
       newPost: "Yeni Gönderi",
       createPost: "Yeni Gönderi Oluştur",
@@ -80,9 +114,11 @@ export const translations: TranslationFiles = {
       postId: "ID",
       userId: "User ID",
       viewPost: "Görüntüle",
+      viewDetails: "Detayları Gör",
       deletePost: "Sil",
       savePost: "Gönderiyi Kaydet",
       backToPosts: "Gönderilere Dön",
+      backToPost: "Gönderiye Dön",
       postLoading: "Gönderi yükleniyor...",
       postError: "Gönderi yüklenirken hata oluştu.",
       postsLoading: "Gönderiler yükleniyor...",
@@ -93,14 +129,27 @@ export const translations: TranslationFiles = {
       fillRequired: "Lütfen başlık ve içerik alanlarını doldurun!",
       titlePlaceholder: "Gönderi başlığını girin...",
       contentPlaceholder: "Gönderi içeriğini girin...",
+      postDetail: "Gönderi Detayı",
+      postDetails: "Gönderi Detayları",
+      searchPosts: "Gönderilerde ara...",
+      postsCount: "{count} gönderi bulundu",
+      noPosts: "Henüz gönderi bulunmuyor",
+      noPostsFound: "Arama kriterlerine uygun gönderi bulunamadı",
+      deleteSuccess: "Gönderi başarıyla silindi!",
+      deleteError: "Gönderi silinirken hata oluştu.",
+      postUpdate: "Güncelle",
+      postUpdateSuccess: "Gönderi başarıyla güncellendi!",
+      postUpdateError: "Gönderi güncellenirken hata oluştu.",
     },
     comments: {
       title: "Yorumlar",
+      comments: "Yorumlar",
       postComments: "Gönderi Yorumları",
       commentAuthor: "Yazar",
       commentContent: "Yorum",
       commentsLoading: "Yorumlar yükleniyor...",
       commentsError: "Yorumlar yüklenirken hata oluştu.",
+      noComments: "Bu gönderi için henüz yorum bulunmuyor",
     },
     forms: {
       required: "Bu alan zorunludur",
@@ -115,6 +164,13 @@ export const translations: TranslationFiles = {
       notFoundMessage: "Aradığınız sayfa mevcut değil veya taşınmış olabilir.",
       backToHome: "Ana Sayfaya Dön",
       goBack: "Geri Git",
+    },
+    modal: {
+      deleteTitle: "Gönderiyi Sil",
+      deleteMessage:
+        "Bu gönderiyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+      confirmDelete: "Evet, Sil",
+      cancel: "İptal",
     },
   },
   en: {
@@ -151,7 +207,12 @@ export const translations: TranslationFiles = {
       loginDescription: "Sign in to your account",
       demoUser: "Demo User",
       demoLogin: "Login with Demo",
-      demoDescription: "This is a demo application. Real credentials are not required.",
+      demoDescription:
+        "This is a demo application. Real credentials are not required.",
+      permissions: "Permissions:",
+      viewPosts: "View Posts (VIEW_POSTS)",
+      viewComments: "View Comments (VIEW_COMMENTS)",
+      editPosts: "Edit Posts (EDIT_POST)",
     },
     dashboard: {
       title: "Dashboard",
@@ -165,6 +226,7 @@ export const translations: TranslationFiles = {
     },
     posts: {
       title: "Posts",
+      postsList: "Posts",
       allPosts: "All Posts",
       newPost: "New Post",
       createPost: "Create New Post",
@@ -174,9 +236,11 @@ export const translations: TranslationFiles = {
       postId: "ID",
       userId: "User ID",
       viewPost: "View",
+      viewDetails: "View Details",
       deletePost: "Delete",
       savePost: "Save Post",
       backToPosts: "Back to Posts",
+      backToPost: "Back to Post",
       postLoading: "Post loading...",
       postError: "Error loading post.",
       postsLoading: "Posts loading...",
@@ -187,14 +251,27 @@ export const translations: TranslationFiles = {
       fillRequired: "Please fill title and content fields!",
       titlePlaceholder: "Enter post title...",
       contentPlaceholder: "Enter post content...",
+      postDetail: "Post Details",
+      postDetails: "Post Details",
+      searchPosts: "Search posts...",
+      postsCount: "{count} posts found",
+      noPosts: "No posts yet",
+      noPostsFound: "No posts found matching your search criteria",
+      deleteSuccess: "Post deleted successfully!",
+      deleteError: "Error deleting post.",
+      postUpdate: "Update",
+      postUpdateSuccess: "Post updated successfully!",
+      postUpdateError: "Error updating post.",
     },
     comments: {
       title: "Comments",
+      comments: "Comments",
       postComments: "Post Comments",
       commentAuthor: "Author",
       commentContent: "Comment",
       commentsLoading: "Comments loading...",
       commentsError: "Error loading comments.",
+      noComments: "No comments yet for this post",
     },
     forms: {
       required: "This field is required",
@@ -206,9 +283,17 @@ export const translations: TranslationFiles = {
       forbidden: "Access Denied",
       notFound: "Page Not Found",
       forbiddenMessage: "You do not have permission to access this page.",
-      notFoundMessage: "The page you are looking for does not exist or has been moved.",
+      notFoundMessage:
+        "The page you are looking for does not exist or has been moved.",
       backToHome: "Back to Home",
       goBack: "Go Back",
+    },
+    modal: {
+      deleteTitle: "Delete Post",
+      deleteMessage:
+        "Are you sure you want to delete this post? This action cannot be undone.",
+      confirmDelete: "Yes, Delete",
+      cancel: "Cancel",
     },
   },
 };

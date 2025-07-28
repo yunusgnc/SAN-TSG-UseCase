@@ -3,6 +3,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from './contexts/AuthContext';
 import { I18nProvider } from './contexts/I18nContext';
 import AppRoutes from './routes/AppRoutes';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './App.css';
 
 const queryClient = new QueryClient();
@@ -13,13 +15,25 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider defaultLocale={savedLocale}>
-        <AuthProvider>
-          <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <AuthProvider>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <div className="">
-              <AppRoutes />
-            </div>
-          </Router>
-        </AuthProvider>
+            <AppRoutes />
+      </div>
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="light"
+            />
+        </Router>
+      </AuthProvider>
       </I18nProvider>
     </QueryClientProvider>
   );

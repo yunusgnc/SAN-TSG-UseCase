@@ -2,6 +2,7 @@ import React from 'react';
 import { nav } from '../nav';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../contexts/I18nContext';
+import Button from '../components/Button';
 
 const NotFoundPage: React.FC = () => {
   const navigate = useNavigate();
@@ -16,18 +17,20 @@ const NotFoundPage: React.FC = () => {
           {t("errors", "notFoundMessage")}
         </p>
         <div className="space-y-4">
-          <button
+          <Button
+            variant="primary"
+            fullWidth
             onClick={() => nav.dashboard.go(navigate)}
-            className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
           >
             {t("errors", "backToHome")}
-          </button>
-          <button
-            onClick={() => window.history.back()}
-            className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+          </Button>
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => navigate(-1)}
           >
             {t("errors", "goBack")}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

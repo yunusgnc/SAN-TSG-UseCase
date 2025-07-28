@@ -2,6 +2,7 @@ import React from 'react';
 import { nav } from '../nav';
 import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../contexts/I18nContext';
+import Button from '../components/Button';
 
 const ForbiddenPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,12 +16,12 @@ const ForbiddenPage: React.FC = () => {
         <p className="text-gray-600 mb-8">
           {t("errors", "forbiddenMessage")}
         </p>
-        <button
+        <Button
+          variant="primary"
           onClick={() => nav.dashboard.go(navigate)}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
           {t("errors", "backToHome")}
-        </button>
+        </Button>
       </div>
     </div>
   );

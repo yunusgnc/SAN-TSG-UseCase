@@ -1,137 +1,89 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { nav } from "../../nav";
-import { useAuthContext } from "../../contexts/AuthContext";
-import { useCreatePost } from "../../hooks/usePosts";
 import { useI18n } from "../../contexts/I18nContext";
+import { useCreatePost } from "../../hooks/usePosts";
+import Button from "../../components/Button";
+import { FiArrowLeft, FiPlus } from "react-icons/fi";
+import { toast } from 'react-toastify';
 
 const CreatePostPage: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuthContext();
   const { t } = useI18n();
-  const createPostMutation = useCreatePost();
-  const [formData, setFormData] = useState({
-    title: "",
-    body: "",
-  });
+  const { mutate: createPost, isPending } = useCreatePost();
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!formData.title.trim() || !formData.body.trim()) {
-      alert(t("posts", "fillRequired"));
-      return;
-    }
-
-    createPostMutation.mutate(
-      {
-        title: formData.title,
-        body: formData.body,
-        userId: 1,
-      },
+    createPost(
+      { title, body },
       {
         onSuccess: () => {
-          alert(t("posts", "createSuccess"));
-          navigate("/posts");
+          toast.success('Gönderi başarıyla oluşturuldu!');
+          nav.dashboard.go(navigate);
         },
+        onError: () => {
+          toast.error('Gönderi oluşturulurken bir hata oluştu');
+        }
       }
     );
   };
 
-  const handleCancel = () => {
-    navigate("/posts");
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {t("posts", "createPost")}
-            </h1>
-            {user && (
-              <p className="text-gray-600 mt-1">
-                {t("common", "welcome")}, {user.name}
-              </p>
-            )}
-          </div>
-          <div className="flex space-x-4">
-            <button
-              onClick={() => navigate("/posts")}
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            >
-              {t("posts", "backToPosts")}
-            </button>
-            <button
-              onClick={() => nav.dashboard.go(navigate)}
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-            >
-              {t("dashboard", "title")}
-            </button>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-8 px-2">
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center gap-2 mb-6">
+          <button
+            onClick={() => nav.dashboard.go(navigate)}
+            className="p-2 rounded-full bg-white shadow hover:bg-blue-100 transition"
+            title={t("posts", "backToPosts")}
+          >
+            <FiArrowLeft className="w-5 h-5 text-blue-600" />
+          </button>
+          <h1 className="text-2xl font-bold text-blue-800">{t("posts", "createPost")}</h1>
         </div>
-
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="title"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  {t("posts", "postTitle")} *
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) =>
-                    setFormData({ ...formData, title: e.target.value })
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t("posts", "titlePlaceholder")}
-                  required
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="body"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  {t("posts", "postContent")} *
-                </label>
-                <textarea
-                  id="body"
-                  value={formData.body}
-                  onChange={(e) =>
-                    setFormData({ ...formData, body: e.target.value })
-                  }
-                  rows={12}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={t("posts", "contentPlaceholder")}
-                  required
-                />
-              </div>
-
-              <div className="flex space-x-4">
-                <button
-                  type="submit"
-                  className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
-                >
-                  {t("posts", "createPost")}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded"
-                >
-                  {t("common", "cancel")}
-                </button>
-              </div>
-            </form>
-          </div>
+        <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-100">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-blue-700 mb-1">
+                {t("posts", "title")}
+              </label>
+              <input
+                type="text"
+                className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                placeholder={t("posts", "titlePlaceholder")}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-blue-700 mb-1">
+                {t("posts", "body")}
+              </label>
+              <textarea
+                className="w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                value={body}
+                onChange={(e) => setBody(e.target.value)}
+                required
+                rows={5}
+                placeholder={t("posts", "bodyPlaceholder")}
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                variant="primary"
+                size="md"
+                disabled={isPending}
+                className="flex items-center gap-1"
+              >
+                <FiPlus className="w-4 h-4" />
+                {t("posts", "createPost")}
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

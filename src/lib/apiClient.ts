@@ -63,7 +63,7 @@ export interface Comment {
 export interface CreatePostData {
   title: string;
   body: string;
-  userId: number;
+  userId?: number;
 }
 
 export interface UpdatePostData {

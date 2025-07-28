@@ -5,7 +5,7 @@ import { getTranslation } from '../i18n';
 interface I18nContextType {
   locale: string;
   setLocale: (locale: string) => void;
-  t: (module: string, key: string) => string;
+  t: (module: string, key: string, params?: Record<string, any>) => string;
   availableLocales: string[];
 }
 
@@ -39,8 +39,16 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
     }
   };
 
-  const t = (module: string, key: string): string => {
-    return getTranslation(locale, module, key);
+  const t = (module: string, key: string, params?: Record<string, any>): string => {
+    let translation = getTranslation(locale, module, key) || '';
+    
+    if (params) {
+      Object.keys(params).forEach(paramKey => {
+        translation = translation.replace(`{${paramKey}}`, params[paramKey]);
+      });
+    }
+    
+    return translation;
   };
 
   const value: I18nContextType = {

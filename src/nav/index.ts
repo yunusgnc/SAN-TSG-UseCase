@@ -1,6 +1,7 @@
 import { routes } from '../routes/routes';
 import type { AppRoute } from '../routes/routes';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 let hasPermission: ((permission: string) => boolean) | null = null;
 let isUserLoggedIn: (() => boolean) | null = null;
@@ -37,10 +38,9 @@ const createNavigator = (): Navigator => {
         return path;
       },
       go: (navigate, params) => {
-        // Permission kontrolü
         if (route.permissions && route.permissions.length > 0) {
           if (!isUserLoggedIn || !isUserLoggedIn()) {
-            alert('You are not authorized to access this page');
+            toast.error('Bu sayfaya erişim yetkiniz yok');
             return;
           }
           
@@ -49,7 +49,7 @@ const createNavigator = (): Navigator => {
           );
           
           if (!hasAllPermissions) {
-            alert('You are not authorized to access this page');
+            toast.error('Bu sayfaya erişim yetkiniz yok');
             return;
           }
         }
