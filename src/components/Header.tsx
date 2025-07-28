@@ -2,13 +2,10 @@ import React, { useState } from "react";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useI18n } from "../contexts/I18nContext";
 import { useNavigate } from "react-router-dom";
-import { nav } from "../nav";
-import Button from "./Button";
 import {
   FiMenu,
   FiX,
   FiGlobe,
-  FiUser,
   FiLogOut,
   FiHome,
   FiChevronDown,
