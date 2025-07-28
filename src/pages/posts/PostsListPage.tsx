@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 const PostsListPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useI18n();
-  const { user, hasPermission } = useAuthContext();
+  const { hasPermission } = useAuthContext();
   const { data: posts, isLoading, error } = usePosts();
   const deletePostMutation = useDeletePost();
   const queryClient = useQueryClient();
