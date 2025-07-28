@@ -2,10 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { nav } from "../../nav";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { useCreatePost } from "../../hooks/usePosts";
+import { useI18n } from "../../contexts/I18nContext";
 
 const CreatePostPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { t } = useI18n();
+  const createPostMutation = useCreatePost();
   const [formData, setFormData] = useState({
     title: "",
     body: "",
@@ -15,14 +19,23 @@ const CreatePostPage: React.FC = () => {
     e.preventDefault();
 
     if (!formData.title.trim() || !formData.body.trim()) {
-      alert("Lütfen başlık ve içerik alanlarını doldurun!");
+      alert(t("posts", "fillRequired"));
       return;
     }
 
-    console.log("Yeni gönderi oluşturuldu:", formData);
-
-    alert("Gönderi başarıyla oluşturuldu!");
-    navigate("/posts");
+    createPostMutation.mutate(
+      {
+        title: formData.title,
+        body: formData.body,
+        userId: 1,
+      },
+      {
+        onSuccess: () => {
+          alert(t("posts", "createSuccess"));
+          navigate("/posts");
+        },
+      }
+    );
   };
 
   const handleCancel = () => {
@@ -35,10 +48,12 @@ const CreatePostPage: React.FC = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Yeni Gönderi Oluştur
+              {t("posts", "createPost")}
             </h1>
             {user && (
-              <p className="text-gray-600 mt-1">Hoş geldin, {user.name}</p>
+              <p className="text-gray-600 mt-1">
+                {t("common", "welcome")}, {user.name}
+              </p>
             )}
           </div>
           <div className="flex space-x-4">
@@ -46,13 +61,13 @@ const CreatePostPage: React.FC = () => {
               onClick={() => navigate("/posts")}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
-              Gönderilere Dön
+              {t("posts", "backToPosts")}
             </button>
             <button
               onClick={() => nav.dashboard.go(navigate)}
               className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
             >
-              Dashboard
+              {t("dashboard", "title")}
             </button>
           </div>
         </div>
@@ -65,7 +80,7 @@ const CreatePostPage: React.FC = () => {
                   htmlFor="title"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  Başlık *
+                  {t("posts", "postTitle")} *
                 </label>
                 <input
                   type="text"
@@ -75,7 +90,7 @@ const CreatePostPage: React.FC = () => {
                     setFormData({ ...formData, title: e.target.value })
                   }
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Gönderi başlığını girin..."
+                  placeholder={t("posts", "titlePlaceholder")}
                   required
                 />
               </div>
@@ -85,7 +100,7 @@ const CreatePostPage: React.FC = () => {
                   htmlFor="body"
                   className="block text-sm font-medium text-gray-700 mb-2"
                 >
-                  İçerik *
+                  {t("posts", "postContent")} *
                 </label>
                 <textarea
                   id="body"
@@ -95,7 +110,7 @@ const CreatePostPage: React.FC = () => {
                   }
                   rows={12}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Gönderi içeriğini girin..."
+                  placeholder={t("posts", "contentPlaceholder")}
                   required
                 />
               </div>
@@ -105,14 +120,14 @@ const CreatePostPage: React.FC = () => {
                   type="submit"
                   className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded"
                 >
-                  Gönderiyi Oluştur
+                  {t("posts", "createPost")}
                 </button>
                 <button
                   type="button"
                   onClick={handleCancel}
                   className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded"
                 >
-                  İptal
+                  {t("common", "cancel")}
                 </button>
               </div>
             </form>

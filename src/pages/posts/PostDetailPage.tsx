@@ -1,52 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { nav } from "../../nav";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { usePost, useUpdatePost } from "../../hooks/usePosts";
+import { useComments } from "../../hooks/useComments";
+import { useI18n } from "../../contexts/I18nContext";
 
 const PostDetailPage: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<"edit" | "comments">("edit");
 
-  const post = {
-    id: parseInt(postId || "1"),
-    title: "Örnek Gönderi Başlığı",
-    body: "Bu örnek gönderinin detaylı içeriği. Burada gönderinin tam metni yer alacak ve kullanıcılar bu içeriği okuyabilecek.",
-    userId: 1,
-    comments: [
-      {
-        id: 1,
-        postId: parseInt(postId || "1"),
-        name: "Kullanıcı 1",
-        email: "user1@example.com",
-        body: "Harika bir gönderi!",
-      },
-      {
-        id: 2,
-        postId: parseInt(postId || "1"),
-        name: "Kullanıcı 2",
-        email: "user2@example.com",
-        body: "Çok faydalı bilgiler.",
-      },
-      {
-        id: 3,
-        postId: parseInt(postId || "1"),
-        name: "Kullanıcı 3",
-        email: "user3@example.com",
-        body: "Teşekkürler paylaşım için.",
-      },
-    ],
-  };
+  const postIdNumber = parseInt(postId || "1");
+  const { data: post, isLoading: postLoading, error: postError } = usePost(postIdNumber);
+  const { data: comments, isLoading: commentsLoading, error: commentsError } = useComments(postIdNumber);
+  const updatePostMutation = useUpdatePost();
 
   const [editForm, setEditForm] = useState({
-    title: post.title,
-    body: post.body,
+    title: "",
+    body: "",
   });
 
+  useEffect(() => {
+    if (post) {
+      setEditForm({
+        title: post.title,
+        body: post.body,
+      });
+    }
+  }, [post]);
+
+  if (postLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+              <p className="text-gray-600">{t("posts", "postLoading")}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (postError || !post) {
+    return (
+      <div className="min-h-screen bg-gray-50 p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-center items-center h-64">
+            <div className="text-center">
+              <p className="text-red-600">{t("posts", "postError")}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const handleSave = () => {
-    console.log("Gönderi kaydedildi:", editForm);
-    alert("Gönderi başarıyla kaydedildi!");
+    if (post) {
+      updatePostMutation.mutate(
+        { id: post.id, data: editForm },
+        {
+          onSuccess: () => {
+            alert(t("posts", "saveSuccess"));
+          },
+        }
+      );
+    }
   };
 
   const handleCancel = () => {
@@ -59,24 +84,24 @@ const PostDetailPage: React.FC = () => {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              Gönderi #{postId}
+              {t("posts", "title")} #{postId}
             </h1>
             {user && (
-              <p className="text-gray-600 mt-1">Hoş geldin, {user.name}</p>
+              <p className="text-gray-600 mt-1">{t("common", "welcome")}, {user.name}</p>
             )}
           </div>
           <div className="flex space-x-4">
             <button
-              onClick={() => navigate("/posts")}
+              onClick={() => nav.posts.go(navigate)}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
             >
-              Gönderilere Dön
+              {t("posts", "backToPosts")}
             </button>
             <button
               onClick={() => nav.dashboard.go(navigate)}
               className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
             >
-              Dashboard
+              {t("dashboard", "title")}
             </button>
           </div>
         </div>
@@ -93,7 +118,7 @@ const PostDetailPage: React.FC = () => {
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
-                Gönderiyi Düzenle
+                {t("posts", "editPost")}
               </button>
               <button
                 onClick={() => setActiveTab("comments")}
@@ -103,7 +128,7 @@ const PostDetailPage: React.FC = () => {
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 }`}
               >
-                Gönderi Yorumları
+                {t("comments", "postComments")}
               </button>
             </nav>
           </div>
@@ -112,12 +137,12 @@ const PostDetailPage: React.FC = () => {
             {activeTab === "edit" ? (
               <div>
                 <h2 className="text-xl font-semibold mb-4">
-                  Gönderiyi Düzenle
+                  {t("posts", "editPost")}
                 </h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Başlık
+                      {t("posts", "postTitle")}
                     </label>
                     <input
                       type="text"
@@ -130,7 +155,7 @@ const PostDetailPage: React.FC = () => {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      İçerik
+                      {t("posts", "postContent")}
                     </label>
                     <textarea
                       value={editForm.body}
@@ -146,13 +171,13 @@ const PostDetailPage: React.FC = () => {
                       onClick={handleSave}
                       className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                     >
-                      Kaydet
+                      {t("common", "save")}
                     </button>
                     <button
                       onClick={handleCancel}
                       className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                     >
-                      İptal
+                      {t("common", "cancel")}
                     </button>
                   </div>
                 </div>
@@ -160,30 +185,41 @@ const PostDetailPage: React.FC = () => {
             ) : (
               <div>
                 <h2 className="text-xl font-semibold mb-4">
-                  Gönderi Yorumları
+                  {t("comments", "postComments")}
                 </h2>
                 <div className="space-y-4">
-                  {post.comments.map((comment) => (
-                    <div
-                      key={comment.id}
-                      className="border border-gray-200 rounded-lg p-4"
-                    >
-                      <div className="flex items-start space-x-3">
-                        <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-2 mb-1">
-                            <span className="font-medium text-gray-900">
-                              {comment.name}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              ({comment.email})
-                            </span>
+                  {commentsLoading ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                      <p className="text-gray-600">{t("comments", "commentsLoading")}</p>
+                    </div>
+                  ) : commentsError ? (
+                    <div className="text-center py-4">
+                      <p className="text-red-600">{t("comments", "commentsError")}</p>
+                    </div>
+                  ) : (
+                    comments?.map((comment: any) => (
+                      <div
+                        key={comment.id}
+                        className="border border-gray-200 rounded-lg p-4"
+                      >
+                        <div className="flex items-start space-x-3">
+                          <div className="w-8 h-8 bg-gray-300 rounded-full flex-shrink-0"></div>
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-1">
+                              <span className="font-medium text-gray-900">
+                                {comment.name}
+                              </span>
+                              <span className="text-sm text-gray-500">
+                                ({comment.email})
+                              </span>
+                            </div>
+                            <p className="text-gray-700">{comment.body}</p>
                           </div>
-                          <p className="text-gray-700">{comment.body}</p>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
             )}

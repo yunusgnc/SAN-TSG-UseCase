@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { setAuthHelpers } from '../nav';
 
 export interface User {
   name: string;
@@ -65,6 +66,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const hasPermission = (permission: string): boolean => {
     return user?.permissions.includes(permission) || false;
   };
+
+  const isUserLoggedIn = (): boolean => {
+    return user !== null;
+  };
+
+  useEffect(() => {
+    setAuthHelpers(hasPermission, isUserLoggedIn);
+  }, [user]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');

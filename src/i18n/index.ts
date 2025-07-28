@@ -4,9 +4,23 @@ export interface TranslationModule {
 
 export interface TranslationFiles {
   [locale: string]: {
-    [module: string]: TranslationModule;
+    [module: string]: {
+      [key: string]: string;
+    };
   };
 }
+
+export const getTranslation = (
+  locale: string,
+  module: string,
+  key: string
+): string => {
+  return translations[locale]?.[module]?.[key] || key;
+};
+
+export const preloadTranslations = async (): Promise<void> => {
+  return Promise.resolve();
+};
 
 export const translations: TranslationFiles = {
   tr: {
@@ -22,6 +36,19 @@ export const translations: TranslationFiles = {
       dashboard: "Dashboard",
       posts: "Gönderiler",
       comments: "Yorumlar",
+      welcome: "Hoş geldin",
+      id: "ID",
+      userId: "User ID",
+      title: "Başlık",
+      content: "İçerik",
+      create: "Oluştur",
+      update: "Güncelle",
+      confirm: "Onayla",
+      error: "Hata",
+      success: "Başarılı",
+      required: "Zorunlu",
+      backToPosts: "Gönderilere Dön",
+      backToDashboard: "Dashboard'a Dön",
     },
     auth: {
       login: "Giriş Yap",
@@ -30,6 +57,7 @@ export const translations: TranslationFiles = {
       loginDescription: "Hesabınıza giriş yapın",
       demoUser: "Demo Kullanıcı",
       demoLogin: "Demo ile Giriş Yap",
+      demoDescription: "Bu bir demo uygulamasıdır. Gerçek kimlik bilgileri gerekmez.",
     },
     dashboard: {
       title: "Dashboard",
@@ -37,6 +65,9 @@ export const translations: TranslationFiles = {
       recentComments: "Son 5 Yorum",
       welcome: "Hoş geldin",
       permissions: "İzinler",
+      postsLoading: "Gönderiler yükleniyor...",
+      commentsLoading: "Yorumlar yükleniyor...",
+      viewDetails: "Detayları Gör",
     },
     posts: {
       title: "Gönderiler",
@@ -52,12 +83,24 @@ export const translations: TranslationFiles = {
       deletePost: "Sil",
       savePost: "Gönderiyi Kaydet",
       backToPosts: "Gönderilere Dön",
+      postLoading: "Gönderi yükleniyor...",
+      postError: "Gönderi yüklenirken hata oluştu.",
+      postsLoading: "Gönderiler yükleniyor...",
+      postsError: "Gönderiler yüklenirken hata oluştu.",
+      deleteConfirm: "Bu gönderiyi silmek istediğinizden emin misiniz?",
+      saveSuccess: "Gönderi başarıyla kaydedildi!",
+      createSuccess: "Gönderi başarıyla oluşturuldu!",
+      fillRequired: "Lütfen başlık ve içerik alanlarını doldurun!",
+      titlePlaceholder: "Gönderi başlığını girin...",
+      contentPlaceholder: "Gönderi içeriğini girin...",
     },
     comments: {
       title: "Yorumlar",
       postComments: "Gönderi Yorumları",
       commentAuthor: "Yazar",
       commentContent: "Yorum",
+      commentsLoading: "Yorumlar yükleniyor...",
+      commentsError: "Yorumlar yüklenirken hata oluştu.",
     },
     forms: {
       required: "Bu alan zorunludur",
@@ -87,6 +130,19 @@ export const translations: TranslationFiles = {
       dashboard: "Dashboard",
       posts: "Posts",
       comments: "Comments",
+      welcome: "Welcome",
+      id: "ID",
+      userId: "User ID",
+      title: "Title",
+      content: "Content",
+      create: "Create",
+      update: "Update",
+      confirm: "Confirm",
+      error: "Error",
+      success: "Success",
+      required: "Required",
+      backToPosts: "Back to Posts",
+      backToDashboard: "Back to Dashboard",
     },
     auth: {
       login: "Login",
@@ -95,6 +151,7 @@ export const translations: TranslationFiles = {
       loginDescription: "Sign in to your account",
       demoUser: "Demo User",
       demoLogin: "Login with Demo",
+      demoDescription: "This is a demo application. Real credentials are not required.",
     },
     dashboard: {
       title: "Dashboard",
@@ -102,6 +159,9 @@ export const translations: TranslationFiles = {
       recentComments: "Recent 5 Comments",
       welcome: "Welcome",
       permissions: "Permissions",
+      postsLoading: "Posts loading...",
+      commentsLoading: "Comments loading...",
+      viewDetails: "View Details",
     },
     posts: {
       title: "Posts",
@@ -117,12 +177,24 @@ export const translations: TranslationFiles = {
       deletePost: "Delete",
       savePost: "Save Post",
       backToPosts: "Back to Posts",
+      postLoading: "Post loading...",
+      postError: "Error loading post.",
+      postsLoading: "Posts loading...",
+      postsError: "Error loading posts.",
+      deleteConfirm: "Are you sure you want to delete this post?",
+      saveSuccess: "Post saved successfully!",
+      createSuccess: "Post created successfully!",
+      fillRequired: "Please fill title and content fields!",
+      titlePlaceholder: "Enter post title...",
+      contentPlaceholder: "Enter post content...",
     },
     comments: {
       title: "Comments",
       postComments: "Post Comments",
       commentAuthor: "Author",
       commentContent: "Comment",
+      commentsLoading: "Comments loading...",
+      commentsError: "Error loading comments.",
     },
     forms: {
       required: "This field is required",
@@ -134,23 +206,9 @@ export const translations: TranslationFiles = {
       forbidden: "Access Denied",
       notFound: "Page Not Found",
       forbiddenMessage: "You do not have permission to access this page.",
-      notFoundMessage:
-        "The page you are looking for does not exist or has been moved.",
+      notFoundMessage: "The page you are looking for does not exist or has been moved.",
       backToHome: "Back to Home",
       goBack: "Go Back",
     },
   },
-};
-
-export const getTranslation = (
-  locale: string = "tr",
-  module: string,
-  key: string
-): string => {
-  return translations[locale]?.[module]?.[key] || key;
-};
-
-export const preloadTranslations = async (modules: string[]): Promise<void> => {
-  console.log("Preloading translations for modules:", modules);
-  return Promise.resolve();
 };

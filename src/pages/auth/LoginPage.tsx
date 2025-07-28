@@ -13,18 +13,17 @@ const LoginPage: React.FC = () => {
   const handleLogin = () => {
     const USER = {
       name: "John Doe",
-      permissions: ["VIEW_POSTS", "VIEW_COMMENTS"],
+      permissions: ["VIEW_POSTS", "VIEW_COMMENTS", "EDIT_POST", "CREATE_POST"],
     };
 
     login(USER);
     console.log("Kullanıcı giriş yaptı:", USER);
 
-    nav.dashboard.go(navigate);
+    navigate('/');
   };
 
   return (
     <div className="min-h-screen relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-
       <div className="fixed top-6 right-6 z-50">
         <LanguageSwitcher />
       </div>
@@ -107,7 +106,7 @@ const LoginPage: React.FC = () => {
 
               <div className="text-center pt-4">
                 <p className="text-gray-400 text-sm">
-                  Bu bir demo uygulamasıdır. Gerçek kimlik bilgileri gerekmez.
+                  {t("auth", "demoDescription")}
                 </p>
               </div>
             </div>
