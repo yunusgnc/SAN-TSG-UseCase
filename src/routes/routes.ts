@@ -48,11 +48,11 @@ export const routes: AppRoute[] = [
     translations: ["posts", "common"],
   },
   {
-    name: "postDetail",
-    path: "/posts/:postId",
-    renderer: () => import("../pages/posts/PostDetailPage"),
-    permissions: ["VIEW_POSTS"],
-    translations: ["posts", "comments", "common"],
+    name: "createPost",
+    path: "/posts/create",
+    renderer: () => import("../pages/posts/CreatePostPage"),
+    permissions: ["VIEW_POSTS", "EDIT_POST"],
+    translations: ["posts", "forms", "common"],
   },
   {
     name: "editPost",
@@ -69,10 +69,10 @@ export const routes: AppRoute[] = [
     translations: ["posts", "comments", "common"],
   },
   {
-    name: "createPost",
-    path: "/posts/create",
-    renderer: () => import("../pages/posts/CreatePostPage"),
-    permissions: ["VIEW_POSTS", "EDIT_POST"],
-    translations: ["posts", "forms", "common"],
+    name: "postDetail",
+    path: "/posts/:postId",
+    renderer: () => import("../pages/posts/PostDetailPage"),
+    permissions: ["VIEW_POSTS"],
+    translations: ["posts", "comments", "common"],
   },
 ];

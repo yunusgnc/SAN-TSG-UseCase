@@ -15,11 +15,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider defaultLocale={savedLocale}>
-      <AuthProvider>
-        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+        <AuthProvider>
+          <Router>
             <div className="">
-            <AppRoutes />
-      </div>
+              <AppRoutes />
+            </div>
             <ToastContainer
               position="top-right"
               autoClose={3000}
@@ -32,8 +32,8 @@ function App() {
               pauseOnHover
               theme="light"
             />
-        </Router>
-      </AuthProvider>
+          </Router>
+        </AuthProvider>
       </I18nProvider>
     </QueryClientProvider>
   );

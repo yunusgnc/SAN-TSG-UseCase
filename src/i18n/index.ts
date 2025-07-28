@@ -20,20 +20,17 @@ export const getTranslation = (
 
 export const preloadTranslations = async (modules: string[]): Promise<void> => {
   try {
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
     await Promise.all(
       modules.map(async (module) => {
         try {
           const response = await fetch(
-            `https://jsonplaceholder.typicode.com/posts/1`
+            `/api/translations/${module}.json`
           );
           if (!response.ok) {
             console.warn(
               `Translation module ${module} not found, using fallback`
             );
           }
-          console.log(`Translation module ${module} preloaded successfully`);
         } catch (error) {
           console.warn(
             `Failed to preload translation module ${module}:`,

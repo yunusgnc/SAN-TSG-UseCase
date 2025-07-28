@@ -8,6 +8,7 @@ import Button from "../../components/Button";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { FiEdit2, FiEye, FiTrash2, FiPlus, FiSearch } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 
 const PostsListPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const PostsListPage: React.FC = () => {
   const { user, hasPermission } = useAuthContext();
   const { data: posts, isLoading, error } = usePosts();
   const deletePostMutation = useDeletePost();
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredPosts = posts?.filter(post =>
@@ -24,10 +26,15 @@ const PostsListPage: React.FC = () => {
 
   const handleDelete = async (postId: number) => {
     if (window.confirm(t("posts", "deleteConfirm"))) {
+      const currentPosts = queryClient.getQueryData(['posts']) as any[];
+      const updatedPosts = currentPosts.filter(post => post.id !== postId);
+      queryClient.setQueryData(['posts'], updatedPosts);
+      
       try {
         await deletePostMutation.mutateAsync(postId);
         toast.success(t("posts", "deleteSuccess"));
       } catch (error) {
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
         toast.error(t("posts", "deleteError"));
       }
     }
@@ -59,7 +66,7 @@ const PostsListPage: React.FC = () => {
             <h1 className="text-2xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
               {t("posts", "postsList")}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-center">
               {t("posts", "postsCount", { count: filteredPosts.length })}
             </p>
           </div>

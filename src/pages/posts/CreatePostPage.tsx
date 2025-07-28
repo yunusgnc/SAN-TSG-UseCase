@@ -4,27 +4,47 @@ import { nav } from "../../nav";
 import { useI18n } from "../../contexts/I18nContext";
 import { useCreatePost } from "../../hooks/usePosts";
 import Button from "../../components/Button";
-import { FiArrowLeft, FiPlus } from "react-icons/fi";
-import { toast } from 'react-toastify';
+import { FiArrowLeft, FiSave } from "react-icons/fi";
+import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CreatePostPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useI18n();
-  const { mutate: createPost, isPending } = useCreatePost();
+  const { mutate: createPost, isPending: creating } = useCreatePost();
+  const queryClient = useQueryClient();
+
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const currentPosts = queryClient.getQueryData(['posts']) as any[];
+    const newPost = {
+      id: Date.now(),
+      title,
+      body,
+      userId: 1
+    };
+    queryClient.setQueryData(['posts'], [newPost, ...currentPosts]);
+    
     createPost(
       { title, body },
       {
-        onSuccess: () => {
-          toast.success('Gönderi başarıyla oluşturuldu!');
-          nav.dashboard.go(navigate);
+        onSuccess: (createdPost) => {
+          const posts = queryClient.getQueryData(['posts']) as any[];
+          const updatedPosts = posts.map(post => 
+            post.id === newPost.id ? createdPost : post
+          );
+          queryClient.setQueryData(['posts'], updatedPosts);
+          
+          toast.success(t("posts", "createSuccess"));
+          nav.posts.go(navigate);
         },
         onError: () => {
-          toast.error('Gönderi oluşturulurken bir hata oluştu');
+          queryClient.invalidateQueries({ queryKey: ['posts'] });
+          toast.error(t("posts", "createError"));
         }
       }
     );
@@ -35,7 +55,7 @@ const CreatePostPage: React.FC = () => {
       <div className="max-w-2xl mx-auto">
         <div className="flex items-center gap-2 mb-6">
           <button
-            onClick={() => nav.dashboard.go(navigate)}
+            onClick={() => nav.posts.back(navigate)}
             className="p-2 rounded-full bg-white shadow hover:bg-blue-100 transition"
             title={t("posts", "backToPosts")}
           >
@@ -76,10 +96,10 @@ const CreatePostPage: React.FC = () => {
                 type="submit"
                 variant="primary"
                 size="md"
-                disabled={isPending}
+                disabled={creating}
                 className="flex items-center gap-1"
               >
-                <FiPlus className="w-4 h-4" />
+                <FiSave className="w-4 h-4" />
                 {t("posts", "createPost")}
               </Button>
             </div>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { setAuthHelpers } from '../nav';
@@ -11,7 +11,7 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  login: (user: User) => void;
+  login: (user: User) => Promise<void>;
   logout: () => void;
   hasPermission: (permission: string) => boolean;
 }
@@ -53,9 +53,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     gcTime: Infinity,
   });
 
-  const login = (userData: User) => {
+  const login = async (userData: User) => {
     queryClient.setQueryData(['user'], userData);
     localStorage.setItem('user', JSON.stringify(userData));
+    
+    // State'in güncellenmesini bekleyelim
+    await new Promise(resolve => setTimeout(resolve, 0));
   };
 
   const logout = () => {
@@ -63,17 +66,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
   };
 
-  const hasPermission = (permission: string): boolean => {
+  const hasPermission = useCallback((permission: string): boolean => {
     return user?.permissions.includes(permission) || false;
-  };
+  }, [user]);
 
-  const isUserLoggedIn = (): boolean => {
+  const isUserLoggedIn = useCallback((): boolean => {
     return user !== null;
-  };
+  }, [user]);
 
   useEffect(() => {
     setAuthHelpers(hasPermission, isUserLoggedIn);
-  }, [user]);
+  }, [hasPermission, isUserLoggedIn]);
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');

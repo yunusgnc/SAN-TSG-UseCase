@@ -17,15 +17,15 @@ const LoginPage: React.FC = () => {
   });
 
   const handlePermissionChange = (permission: string) => {
-    setPermissions(prev => ({
+    setPermissions((prev) => ({
       ...prev,
-      [permission]: !prev[permission as keyof typeof prev]
+      [permission]: !prev[permission as keyof typeof prev],
     }));
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const selectedPermissions = Object.keys(permissions).filter(
-      key => permissions[key as keyof typeof permissions]
+      (key) => permissions[key as keyof typeof permissions]
     );
 
     const USER = {
@@ -33,10 +33,8 @@ const LoginPage: React.FC = () => {
       permissions: selectedPermissions,
     };
 
-    login(USER);
-    console.log("Kullanıcı giriş yaptı:", USER);
-
-    navigate("/");
+    await login(USER);
+    nav.dashboard.go(navigate);
   };
 
   return (
@@ -97,11 +95,13 @@ const LoginPage: React.FC = () => {
                     <p className="text-gray-300 text-sm">John Doe</p>
                   </div>
                 </div>
-                
+
                 {/* Permission Checkboxes */}
                 <div className="space-y-3">
-                  <h3 className="text-white font-medium text-sm mb-3">{t("auth", "permissions")}</h3>
-                  
+                  <h3 className="text-white font-medium text-sm mb-3">
+                    {t("auth", "permissions")}
+                  </h3>
+
                   <label className="flex items-center space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
@@ -109,9 +109,11 @@ const LoginPage: React.FC = () => {
                       disabled={true}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
                     />
-                    <span className="text-white text-sm">{t("auth", "viewPosts")}</span>
+                    <span className="text-white text-sm">
+                      {t("auth", "viewPosts")}
+                    </span>
                   </label>
-                  
+
                   <label className="flex items-center space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
@@ -119,17 +121,21 @@ const LoginPage: React.FC = () => {
                       disabled={true}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
                     />
-                    <span className="text-white text-sm">{t("auth", "viewComments")}</span>
+                    <span className="text-white text-sm">
+                      {t("auth", "viewComments")}
+                    </span>
                   </label>
-                  
+
                   <label className="flex items-center space-x-3 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={permissions.EDIT_POST}
-                      onChange={() => handlePermissionChange('EDIT_POST')}
+                      onChange={() => handlePermissionChange("EDIT_POST")}
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                     />
-                    <span className="text-white text-sm">{t("auth", "editPosts")}</span>
+                    <span className="text-white text-sm">
+                      {t("auth", "editPosts")}
+                    </span>
                   </label>
                 </div>
               </div>

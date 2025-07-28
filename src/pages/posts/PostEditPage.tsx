@@ -7,6 +7,7 @@ import Button from "../../components/Button";
 import Modal from "../../components/Modal";
 import { FiArrowLeft, FiSave, FiTrash2 } from "react-icons/fi";
 import { toast } from 'react-toastify';
+import { useQueryClient } from "@tanstack/react-query";
 
 const PostEditPage: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -15,6 +16,7 @@ const PostEditPage: React.FC = () => {
   const { data: post, isLoading, error } = usePost(Number(postId));
   const { mutate: updatePost, isPending: saving } = useUpdatePost();
   const { mutate: deletePost, isPending: deleting } = useDeletePost();
+  const queryClient = useQueryClient();
 
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
@@ -29,17 +31,24 @@ const PostEditPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const currentPosts = queryClient.getQueryData(['posts']) as any[];
+    if (currentPosts && Array.isArray(currentPosts)) {
+      const updatedPosts = currentPosts.map(post => 
+        post.id === Number(postId) ? { ...post, title, body } : post
+      );
+      queryClient.setQueryData(['posts'], updatedPosts);
+    }
+    
     updatePost(
-      { 
-        id: Number(postId), 
-        data: { title, body } 
-      },
+      { id: Number(postId), data: { title, body } },
       {
         onSuccess: () => {
           toast.success('Gönderi başarıyla güncellendi!');
           nav.postDetail.go(navigate, { postId: postId! });
         },
         onError: () => {
+          queryClient.invalidateQueries({ queryKey: ['posts'] });
           toast.error('Gönderi güncellenirken bir hata oluştu');
         }
       }
@@ -51,12 +60,19 @@ const PostEditPage: React.FC = () => {
   };
 
   const handleDeleteConfirm = () => {
+    const currentPosts = queryClient.getQueryData(['posts']) as any[];
+    if (currentPosts && Array.isArray(currentPosts)) {
+      const updatedPosts = currentPosts.filter(post => post.id !== Number(postId));
+      queryClient.setQueryData(['posts'], updatedPosts);
+    }
+    
     deletePost(Number(postId), {
       onSuccess: () => {
         toast.success(t("posts", "deleteSuccess"));
         nav.posts.go(navigate);
       },
       onError: () => {
+        queryClient.invalidateQueries({ queryKey: ['posts'] });
         toast.error(t("posts", "deleteError"));
       }
     });

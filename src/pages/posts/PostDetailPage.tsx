@@ -53,7 +53,7 @@ const PostDetailPage: React.FC = () => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <button
-              onClick={() => nav.dashboard.go(navigate)}
+              onClick={() => nav.posts.back(navigate)}
               className="p-2 rounded-full bg-white shadow hover:bg-blue-100 transition"
               title={t("posts", "backToPosts")}
             >

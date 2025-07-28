@@ -18,7 +18,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   useEffect(() => {
     if (!isLoading) {
       if (!user) {
-        nav.login.go(navigate);
+        navigate('/login');
         return;
       }
 
@@ -28,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
         );
         
         if (!hasAllPermissions) {
-          nav.forbidden.go(navigate);
+          navigate('/403');
           return;
         }
       }
