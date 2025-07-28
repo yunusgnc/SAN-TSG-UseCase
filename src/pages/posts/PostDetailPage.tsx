@@ -1,17 +1,14 @@
 import React from "react";
-import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { nav } from "../../nav";
-import { useAuthContext } from "../../contexts/AuthContext";
 import { usePost } from "../../hooks/usePosts";
 import { useComments } from "../../hooks/useComments";
 import { useI18n } from "../../contexts/I18nContext";
-import Button from "../../components/Button";
-import { FiEdit2, FiArrowLeft, FiMessageSquare } from "react-icons/fi";
+import { FiArrowLeft } from "react-icons/fi";
 
 const PostDetailPage: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
-  const location = useLocation();
   const { t } = useI18n();
 
   const postIdNumber = parseInt(postId || "1");
