@@ -1,14 +1,15 @@
 import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { nav } from "../../nav";
 import { usePost } from "../../hooks/usePosts";
 import { useComments } from "../../hooks/useComments";
 import { useI18n } from "../../contexts/I18nContext";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiEdit2, FiMessageSquare } from "react-icons/fi";
 
 const PostDetailPage: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useI18n();
 
   const postIdNumber = parseInt(postId || "1");
@@ -62,49 +63,78 @@ const PostDetailPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-blue-100">
-          <h2 className="font-semibold text-xl text-blue-700 mb-2">
-            {post.title}
-          </h2>
-          <p className="text-gray-700 text-base">{post.body}</p>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-100">
-          <h3 className="font-semibold text-lg text-blue-700 mb-4">
-            {t("comments", "postComments")}
-          </h3>
-          <div className="space-y-4">
-            {commentsError && (
-              <p className="text-red-600">{t("comments", "commentsError")}</p>
-            )}
-            {comments?.map((comment: any) => (
-              <div
-                key={comment.id}
-                className="flex items-start gap-3 bg-blue-50 rounded-lg p-4 border border-blue-100 hover:shadow transition"
-              >
-                <div className="w-9 h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-200 to-blue-400 text-white font-bold text-lg flex-shrink-0">
-                  {comment.name?.[0]?.toUpperCase() || "?"}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-medium text-blue-900 text-sm">
-                      {comment.name}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {comment.email}
-                    </span>
-                  </div>
-                  <p className="text-gray-700 text-sm">{comment.body}</p>
-                </div>
-              </div>
-            ))}
-            {comments && comments.length === 0 && (
-              <p className="text-gray-500 text-sm">
-                {t("comments", "noComments")}
-              </p>
-            )}
+        <div className="bg-white rounded-xl shadow-lg border border-blue-100 mb-6 overflow-hidden">
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => nav.postDetail.go(navigate, { postId: postId! })}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+                location.pathname === `/posts/${postId}`
+                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50'
+                  : 'text-gray-600 hover:text-blue-600 hover:bg-gray-50'
+              }`}
+            >
+              <FiEdit2 className="w-4 h-4" />
+              {t("posts", "postDetails")}
+            </button>
+            <button
+              onClick={() => nav.postComments.go(navigate, { postId: postId! })}
+              className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
+                location.pathname === `/posts/${postId}/comments`
+                  ? "text-blue-600 border-b-2 border-blue-600 bg-blue-50"
+                  : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
+              }`}
+            >
+              <FiMessageSquare className="w-4 h-4" />
+              {t("comments", "comments")}
+            </button>
           </div>
         </div>
+
+        {location.pathname === `/posts/${postId}` ? (
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-100">
+            <h2 className="font-semibold text-xl text-blue-700 mb-2">
+              {post.title}
+            </h2>
+            <p className="text-gray-700 text-base">{post.body}</p>
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-100">
+            <h3 className="font-semibold text-lg text-blue-700 mb-4">
+              {t("comments", "postComments")}
+            </h3>
+            <div className="space-y-4">
+              {commentsError && (
+                <p className="text-red-600">{t("comments", "commentsError")}</p>
+              )}
+              {comments?.map((comment: any) => (
+                <div
+                  key={comment.id}
+                  className="flex items-start gap-3 bg-blue-50 rounded-lg p-4 border border-blue-100 hover:shadow transition"
+                >
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center bg-gradient-to-br from-blue-200 to-blue-400 text-white font-bold text-lg flex-shrink-0">
+                    {comment.name?.[0]?.toUpperCase() || "?"}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-medium text-blue-900 text-sm">
+                        {comment.name}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {comment.email}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 text-sm">{comment.body}</p>
+                  </div>
+                </div>
+              ))}
+              {comments && comments.length === 0 && (
+                <p className="text-gray-500 text-sm">
+                  {t("comments", "noComments")}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -65,7 +65,7 @@ export const routes: AppRoute[] = [
     name: "postComments",
     path: "/posts/:postId/comments",
     renderer: () => import("../pages/posts/PostCommentsPage"),
-    permissions: ["VIEW_POSTS"],
+    permissions: ["VIEW_POSTS", "VIEW_COMMENTS"],
     translations: ["posts", "comments", "common"],
   },
   {

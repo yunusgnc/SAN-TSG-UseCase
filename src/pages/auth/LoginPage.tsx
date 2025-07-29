@@ -4,6 +4,7 @@ import { useAuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "../../contexts/I18nContext";
 import LanguageSwitcher from "../../components/LanguageSwitcher";
+import { FiLock, FiUser, FiLogIn } from "react-icons/fi";
 
 const LoginPage: React.FC = () => {
   const { login } = useAuthContext();
@@ -48,19 +49,7 @@ const LoginPage: React.FC = () => {
           <div className="backdrop-blur-xl bg-white/10 rounded-3xl shadow-2xl border border-white/20 p-8">
             <div className="text-center mb-8">
               <div className="mx-auto h-20 w-20 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                <svg
-                  className="h-10 w-10 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                  />
-                </svg>
+                <FiLock className="h-10 w-10 text-white" />
               </div>
               <h2 className="text-4xl font-bold text-white mb-3">
                 {t("auth", "welcome")}
@@ -74,19 +63,7 @@ const LoginPage: React.FC = () => {
               <div className="backdrop-blur-md bg-white/10 rounded-2xl p-6 border border-white/20">
                 <div className="flex items-center space-x-4 mb-4">
                   <div className="h-12 w-12 bg-gradient-to-r from-blue-400 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
-                    <svg
-                      className="h-6 w-6 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                      />
-                    </svg>
+                    <FiUser className="h-6 w-6 text-white" />
                   </div>
                   <div>
                     <p className="text-white font-semibold text-lg">
@@ -96,7 +73,6 @@ const LoginPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Permission Checkboxes */}
                 <div className="space-y-3">
                   <h3 className="text-white font-medium text-sm mb-3">
                     {t("auth", "permissions")}
@@ -145,19 +121,7 @@ const LoginPage: React.FC = () => {
                 className="w-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 hover:from-blue-600 hover:via-purple-600 hover:to-pink-600 text-white font-bold py-4 px-6 rounded-2xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-300/50 shadow-xl hover:shadow-2xl"
               >
                 <div className="flex items-center justify-center space-x-3">
-                  <svg
-                    className="h-6 w-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                    />
-                  </svg>
+                  <FiLogIn className="h-6 w-6" />
                   <span className="text-lg">{t("auth", "demoLogin")}</span>
                 </div>
               </button>

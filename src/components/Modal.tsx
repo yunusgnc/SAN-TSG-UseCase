@@ -1,4 +1,5 @@
 import React from 'react';
+import { FiAlertTriangle, FiInfo } from 'react-icons/fi';
 import Button from './Button';
 
 interface ModalProps {
@@ -50,26 +51,24 @@ const Modal: React.FC<ModalProps> = ({
 
   const config = variantConfig[variant];
 
+  const renderIcon = () => {
+    switch (variant) {
+      case 'danger':
+      case 'warning':
+        return <FiAlertTriangle className="w-4 h-4 text-white" />;
+      case 'info':
+        return <FiInfo className="w-4 h-4 text-white" />;
+      default:
+        return <FiAlertTriangle className="w-4 h-4 text-white" />;
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-2">
       <div className={`bg-white rounded-xl shadow-lg border ${config.border} max-w-xs w-full`}>
         <div className={`flex items-center gap-2 px-4 pt-4 pb-2 ${config.bg} rounded-t-xl`}>
           <div className={`w-8 h-8 ${config.icon} rounded-lg flex items-center justify-center`}>
-            {variant === 'danger' && (
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            )}
-            {variant === 'warning' && (
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-            )}
-            {variant === 'info' && (
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            )}
+            {renderIcon()}
           </div>
           <h3 className="text-base font-semibold text-gray-900">{title}</h3>
         </div>
