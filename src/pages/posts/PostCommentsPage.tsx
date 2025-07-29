@@ -14,8 +14,16 @@ const PostCommentsPage: React.FC = () => {
   const { t } = useI18n();
 
   const postIdNumber = parseInt(postId || "1");
-  const { data: post, isLoading: postLoading, error: postError } = usePost(postIdNumber);
-  const { data: comments, isLoading: commentsLoading, error: commentsError } = useComments(postIdNumber);
+  const {
+    data: post,
+    isLoading: postLoading,
+    error: postError,
+  } = usePost(postIdNumber);
+  const {
+    data: comments,
+    isLoading: commentsLoading,
+    error: commentsError,
+  } = useComments(postIdNumber);
 
   if (postLoading || commentsLoading) {
     return (
@@ -38,7 +46,6 @@ const PostCommentsPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 py-8 px-2">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <button
@@ -48,7 +55,9 @@ const PostCommentsPage: React.FC = () => {
             >
               <FiArrowLeft className="w-5 h-5 text-blue-600" />
             </button>
-            <h1 className="text-2xl font-bold text-blue-800">{t("comments", "postComments")}</h1>
+            <h1 className="text-2xl font-bold text-blue-800">
+              {t("comments", "postComments")}
+            </h1>
           </div>
           <Button
             variant="primary"
@@ -61,13 +70,13 @@ const PostCommentsPage: React.FC = () => {
           </Button>
         </div>
 
-        {/* Post Summary */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-8 border border-blue-100">
-          <h2 className="font-semibold text-xl text-blue-700 mb-2">{post.title}</h2>
+          <h2 className="font-semibold text-xl text-blue-700 mb-2">
+            {post.title}
+          </h2>
           <p className="text-gray-700 text-base">{post.body}</p>
         </div>
 
-        {/* Comments Section */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border border-blue-100">
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
@@ -96,10 +105,16 @@ const PostCommentsPage: React.FC = () => {
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="font-semibold text-blue-900">{comment.name}</span>
-                      <span className="text-sm text-gray-500">{comment.email}</span>
+                      <span className="font-semibold text-blue-900">
+                        {comment.name}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {comment.email}
+                      </span>
                     </div>
-                    <p className="text-gray-700 leading-relaxed">{comment.body}</p>
+                    <p className="text-gray-700 leading-relaxed">
+                      {comment.body}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -109,7 +124,9 @@ const PostCommentsPage: React.FC = () => {
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiMessageSquare className="w-8 h-8 text-gray-400" />
               </div>
-              <p className="text-gray-500 text-lg">{t("comments", "noComments")}</p>
+              <p className="text-gray-500 text-lg">
+                {t("comments", "noComments")}
+              </p>
             </div>
           )}
         </div>
@@ -118,4 +135,4 @@ const PostCommentsPage: React.FC = () => {
   );
 };
 
-export default PostCommentsPage; 
+export default PostCommentsPage;

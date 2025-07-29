@@ -57,7 +57,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     queryClient.setQueryData(['user'], userData);
     localStorage.setItem('user', JSON.stringify(userData));
     
-    // State'in güncellenmesini bekleyelim
     await new Promise(resolve => setTimeout(resolve, 0));
   };
 

@@ -137,6 +137,7 @@ export const translations: TranslationFiles = {
       postUpdate: "Güncelle",
       postUpdateSuccess: "Gönderi başarıyla güncellendi!",
       postUpdateError: "Gönderi güncellenirken hata oluştu.",
+      body: "İçerik",
     },
     comments: {
       title: "Yorumlar",
@@ -259,6 +260,7 @@ export const translations: TranslationFiles = {
       postUpdate: "Update",
       postUpdateSuccess: "Post updated successfully!",
       postUpdateError: "Error updating post.",
+      body: "Content",
     },
     comments: {
       title: "Comments",

@@ -41,7 +41,6 @@ export const useUpdatePost = () => {
 };
 
 export const useDeletePost = () => {
-  const queryClient = useQueryClient();
   
   return useMutation({
     mutationFn: async (postId: number) => {
@@ -55,8 +54,5 @@ export const useDeletePost = () => {
       
       return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['posts'] });
-    },
   });
-}; 
+};
